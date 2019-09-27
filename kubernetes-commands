@@ -1,1 +1,28 @@
+____________________
+     SERVICES
+____________________
 
+  creat service
+  -----------------       
+  
+  apiVersion: v1
+  kind: Service
+  metadata:
+      name: myapp-service  
+      
+  spec:
+      type: NodePort
+      ports:
+       - targetPort: 80    --> pod
+         port: 80          --> service port
+         nodePort: 30008   --> NODEPORT RANGE: 30000-32767
+      selector:
+         app: myapp
+         type: front-end
+         
+********_______________________________________________________________
+
+# kubectl create -f <file-name.yml>      =   to creat the service
+# kubectl get services                   =     show the service
+# 
+        
