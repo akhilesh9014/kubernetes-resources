@@ -227,5 +227,48 @@ kubectl config use-context <name1>                      = switch to other contex
 
 
 
+_____________________________________________________
+            create daemonSet.yaml
+_____________________________________________________
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: monitoring-daemon 
+spec:
+  selector:
+    metchLabels
+      app: monitoring-agent
+  template:
+    metadata:
+      labels:
+        app: monitoring-agent
+    spec:                        #--> specification
+       containers:
+       - image: monitoring-daemon
+         name: monitoring-agent
+
+------------------------------------------------------------
+kubectl create -f daemon.yaml          = create daemonse 
+kubectl get daemonsets                 = to view the daemonset pod
+kubectl describe daemonset <NAME>      = to view more details of the daemonset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
