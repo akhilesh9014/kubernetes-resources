@@ -29,7 +29,19 @@ spec:
   - name: nginx
     image: nginx
     ports:
-      -  containerPort: 8080
+      -  containerPort: 8080         
+----------------------------------      
+    resources:
+       requests:
+         memory: "1Gi"                } resource limits & Exceed Limits
+         cpu: 1
+       limits:
+         memory: "2Gi"
+         cpu: 2
+      
+      
+      
+      
 
 ------------------------------------------------------------------------------------------------------
 # kubectl create -f <filename.yaml>
