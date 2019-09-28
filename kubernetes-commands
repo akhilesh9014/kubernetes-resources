@@ -1,9 +1,47 @@
-____________________
-     SERVICES
-____________________
+-----------------------------------------------------------------------------------------------------
+pod=container/app    node=vm/localhost-mechine  -n=namespace  -o=output<jaml,json> 
 
-  creat service
-  -----------------       
+
+basic commands -->
+kubectl cluster-info                                 = show the k8s master is running at ip:port
+watch kubectl get all -o wide                        = watch the all kubectl componds
+                       nginx          LP : CP 
+kubectl port-forward <pod-name-id> <8080:80>         = to add the port after access the server
+kubectl logs <pod-name-id>                           = show the pod logs
+kubectl describe <pod-name-id>                       = to describe/full description/full details of the pods
+kubectl describe replicaset < deploy-id > | less     = show the replicaset deploy details
+kubectl -n kube-system get pods                      = show all the cluster related details
+
+
+-----------------------------------------------------------------------------------------------------
+________________________________________________
+    CREAT PODS.yaml
+________________________________________________
+ 
+ apiVersion: v1
+ kind: Pod
+ metadata:
+    name: nginx
+    labels:
+      name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+      -  containerPort: 8080
+
+------------------------------------------------------------------------------------------------------
+# kubectl create -f <filename.yaml>
+# kubectl get pods
+# kubectl get pods --namespace kube-system        = show the deatils of the namespaces 
+
+
+-----------------------------------------------------------------------------------------------------
+______________________________________________
+  CREATE SERVICES.yaml
+______________________________________________
+      
   
   apiVersion: v1
   kind: Service
@@ -20,9 +58,162 @@ ____________________
          app: myapp
          type: front-end
          
-********_______________________________________________________________
+-----------------------------------------------------------------------------------------------------
 
 # kubectl create -f <file-name.yml>      =   to creat the service
 # kubectl get services                   =     show the service
 # 
-        
+
+
+------------------------------------------------------------------------------------------------------        
+____________________________________________________________________________________________________
+     HOW SCHEDULING WORKS
+____________________________________________________________________________________________________
+
+ apiVersion: v1
+ kind: Pod
+ metadata:
+    name: nginx
+    labels:
+      name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+      -  containerPort: 8080
+  nodeName: node01                   --> scheduler to the node01
+  
+------------------------------------------------------------------------------------------------
+  
+  
+  
+  
+-------------------------------------------------------------------------------------------------  
+_________________________________________________________
+  CREAT REPLICASET.yaml      = set up desired state pods
+_________________________________________________________
+
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+    labels:
+      run: nginx
+    name: nginx-deploy 
+spec:
+  replicas: 2
+  selector:
+    metchLabels
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:                        #--> specification
+       containers:
+       - image: nginx
+         name: nginx
+         
+-----------------------------------------------------------------------------------------------------
+kubectl create -f replicaset.yaml               = creat pods using replicaset.yaml file
+kubectl delete pod nginx-replicaset-id          = delete one pod and re-launch automati by replicaset.yaml
+kubectl scale deploy <NAME> --replicas=3        = launch one more pod
+
+
+
+
+
+
+________________________________________________________________________
+          nginx-deployment.yaml            = update the pods/rollback
+________________________________________________________________________
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    labels:
+      run: nginx
+    name: nginx-deploy 
+spec:
+  replicas: 2
+  selector:
+    metchLabels
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:                        #--> specification
+       containers:
+       - image: nginx
+         name: nginx
+         
+---------------------------------------------------------------------------
+kubectl create -f deployment.yaml                 = create/deploy pods
+kubectl delete pod <NAME>                         = delete pod and auto-launch new pod by deploy.yaml
+kubectl describe pod <NAMD>                       = get details/full descripction of the pod
+
+
+
+
+
+
+----------------------------------------------------------------------------
+___________________________________________________________________
+     create namespace
+___________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+kubectl get namespace/ns                           = show the default namespaces
+kubectl create namespace <name>                    = create new namespace
+kubectl -n kube-system get pods                    = get details of the existed namespace(kube-system)
+
+
+--------------------------------------------------------------------------------------------------
+___________________________________________________________
+creat contexts
+___________________________________________________________
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------
+kubectl config get-contexts                             = show the default context
+
+kubectl config set-context <name> --namespace=kube-system --user=kubernetes-admin --cluster=kubernetes        = create new context
+
+kubectl config current-context                          = show the current used context
+kubectl config use-context <name1>                      = switch to other context 
+
+ ----------------------------------------------------|
+         short cuts commands creat                   |
+-----------------------------------------------------|
+   | alias kcc='kubectl config current-context' |    |
+   | alias kuc='kubectl config use-context'     |    |
+                                                     |
+   [ kubectl config current-context = kcc  |         |
+   [ kubectl use-context = kuc             |         |
+                                                     |
+-----------------------------------------------------|
+
+
+
+
+
+
+
