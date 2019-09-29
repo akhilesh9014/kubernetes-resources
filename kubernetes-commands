@@ -11,9 +11,19 @@ kubectl logs <pod-name-id>                           = show the pod logs
 kubectl describe <pod-name-id>                       = to describe/full description/full details of the pods
 kubectl describe replicaset < deploy-id > | less     = show the replicaset deploy details
 kubectl -n kube-system get pods                      = show all the cluster related details
+kubectl create -f <file.yaml>                        = to create pod by using yaml file
+kubectl get deployments                              = to list the deployments
+kubectl apply -f <file.yaml>                         = to update the deployments ( using previous created yaml file pods)
+kubectl set image deployment nginx=nginx:1.9.1       = to see the status of the rollout
+kubectl rollout undo <POD-NAME>                          = to rollout the deployments and show
+kubectl get replicasets                              = show the status of the pods roll/rollout undo
+kubectl rollout history <POD-NAME>                   = to show the history of the rollout-pod
+kubectl edit deployments                             = edit the deployment data ( deployed yaml file )
 
 
------------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------- ------------------------
 ________________________________________________
     CREAT PODS.yaml
 ________________________________________________
