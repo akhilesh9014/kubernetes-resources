@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------------------------
-pod=container/app    node=vm/localhost-mechine  -n=namespace  -o=output<jaml,json> 
+pod=container/app    node=vm/localhost-mechine/working-mechine    -n=namespace  -o=output<jaml,json>
 
 
 basic commands -->
@@ -19,28 +19,35 @@ kubectl rollout undo <POD-NAME>                          = to rollout the deploy
 kubectl get replicasets                              = show the status of the pods roll/rollout undo
 kubectl rollout history <POD-NAME>                   = to show the history of the rollout-pod
 kubectl edit deployments                             = edit the deployment data ( deployed yaml file )
-
+apt-get upgrade -y <pod-name>=1.19.0-00              = upgrade the services 
+apt-get upgrade -y kubelet=1.....                    = pugrade service & 
+  NOTE: after upgrade service = systemctl restart <kubelet>        & any services 
+kubeadm upgrade plan                                 = show the current and available versions in your cluster
+kubectl get nodes                                    = to show the all nodes 
 
 
 
 ----------------------------------------------------------------------------- ------------------------
-________________________________________________
-    CREAT PODS.yaml
-________________________________________________
+________________________________________________________________________________________________________________________________________
+    CREAT PODS.yaml             # create a pod with multiple containers inside it.
+________________________________________________________________________________________________________________________________________
  
  apiVersion: v1
  kind: Pod
  metadata:
     name: nginx
-    labels:
+    labels:                                            
       name: nginx
 spec:
-  containers:
+  containers:                                 }    create multiple containers in single pod like ( nginx,mysql )
   - name: nginx
     image: nginx
     ports:
-      -  containerPort: 8080         
-----------------------------------      
+      -  containerPort: 8080   
+  - name: mysql
+    image: mysql
+   
+================================+++++++++      
     resources:
        requests:
          memory: "1Gi"                } resource limits & Exceed Limits
@@ -48,21 +55,19 @@ spec:
        limits:
          memory: "2Gi"
          cpu: 2
-      
-      
-      
-      
+     
 
-------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
 # kubectl create -f <filename.yaml>
 # kubectl get pods
-# kubectl get pods --namespace kube-system        = show the deatils of the namespaces 
+# kubectl get pods --namespace kube-system                                  = show the deatils of the namespaces 
+# kubectl run <name of pod> --image=<name of the image from registry        = create single container by using this command
+#
 
-
------------------------------------------------------------------------------------------------------
-______________________________________________
+----------------------------------------------------------------------------------------------------------------------------------------
+________________________________________________________________________________________________________________________________________
   CREATE SERVICES.yaml
-______________________________________________
+________________________________________________________________________________________________________________________________________
       
   
   apiVersion: v1
@@ -80,17 +85,17 @@ ______________________________________________
          app: myapp
          type: front-end
          
------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
 
 # kubectl create -f <file-name.yml>      =   to creat the service
 # kubectl get services                   =     show the service
 # 
 
 
-------------------------------------------------------------------------------------------------------        
-____________________________________________________________________________________________________
+----------------------------------------------------------------------------------------------------------------------------------------        
+________________________________________________________________________________________________________________________________________
      HOW SCHEDULING WORKS
-____________________________________________________________________________________________________
+________________________________________________________________________________________________________________________________________
 
  apiVersion: v1
  kind: Pod
@@ -106,15 +111,15 @@ spec:
       -  containerPort: 8080
   nodeName: node01                   --> scheduler to the node01
   
-------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
   
   
   
   
--------------------------------------------------------------------------------------------------  
-_________________________________________________________
-  CREAT REPLICASET.yaml      = set up desired state pods
-_________________________________________________________
+---------------------------------------------------------------------------------------------------------------------------------------- 
+________________________________________________________________________________________________________________________________________
+                                     CREAT REPLICASET.yaml      = set up desired state pods
+________________________________________________________________________________________________________________________________________
 
 apiVersion: extensions/v1beta1
 kind: ReplicaSet
@@ -136,7 +141,7 @@ spec:
        - image: nginx
          name: nginx
          
------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
 kubectl create -f replicaset.yaml               = creat pods using replicaset.yaml file
 kubectl delete pod nginx-replicaset-id          = delete one pod and re-launch automati by replicaset.yaml
 kubectl scale deploy <NAME> --replicas=3        = launch one more pod
@@ -145,10 +150,10 @@ kubectl scale deploy <NAME> --replicas=3        = launch one more pod
 
 
 
-
-________________________________________________________________________
+----------------------------------------------------------------------------------------------------------------------------------------
+________________________________________________________________________________________________________________________________________
           nginx-deployment.yaml            = update the pods/rollback
-________________________________________________________________________
+________________________________________________________________________________________________________________________________________
 
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -181,31 +186,48 @@ kubectl describe pod <NAMD>                       = get details/full descripctio
 
 
 ----------------------------------------------------------------------------
-___________________________________________________________________
-     create namespace
-___________________________________________________________________
+______________________________________________________________________________________________________________________________________
+     create namespace         # Namespaces help pod-to-pod communication using the same namespace.
+______________________________________________________________________________________________________________________________________
 
-
-
-
-
-
-
-
-
-
-
+apiVersion: v1
+kind: Namespce
+metadata
+   name: elk
+   
+-------------------------> using namespace in service
+apiVersion: v1
+kind: Service
+metadata:
+   name: elasticsearch
+   namespace: elk              ------> here using before created namespace
+   labels:
+      component: elasticsearch
+spec:
+   type: LoadBalancer
+   selector:
+      component: elasticsearch
+   ports:
+   - name: http
+      port: 9200
+      protocol: TCP
+   - name: transport
+      port: 9300
+      protocol: TCP
 
 -------------------------------------------------------------------------------------------------
 kubectl get namespace/ns                           = show the default namespaces
-kubectl create namespace <name>                    = create new namespace
+kubectl create namespace <name>                    = create new namespace 
 kubectl -n kube-system get pods                    = get details of the existed namespace(kube-system)
+kubectl create –f <namespace.yml>                  = create namespace by yaml
+kubectl describe namespace <Namespace name>        = to describe the namespace
+kubectl describe namespace <Namespace name>        = delete namespace
 
 
 --------------------------------------------------------------------------------------------------
-___________________________________________________________
-creat contexts
-___________________________________________________________
+________________________________________________________________________________________________________________________________________
+     creat contexts
+________________________________________________________________________________________________________________________________________
 
 
 
@@ -237,9 +259,9 @@ kubectl config use-context <name1>                      = switch to other contex
 
 
 
-_____________________________________________________
+________________________________________________________________________________________________________________________________________
             create daemonSet.yaml
-_____________________________________________________
+________________________________________________________________________________________________________________________________________
 
 apiVersion: apps/v1
 kind: DaemonSet
