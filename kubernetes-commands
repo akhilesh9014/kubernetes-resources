@@ -286,15 +286,77 @@ kubectl get daemonsets                 = to view the daemonset pod
 kubectl describe daemonset <NAME>      = to view more details of the daemonset
 
 
+-----------------------------------------------------------------------------------------
+_________________________________________________________________________________________
+                           create volume.yaml  
+_________________________________________________________________________________________
+ 
+apiVersion: v1
+kind: persistentVolume
+metadata:
+  name: pv-volume
+spec:
+  accessModes:
+      - ReadWriteOnce
+  capacity:
+      storage: 1Gi
+  hostPath:                           -----> it can be stored in local
+    path: /tmp/data                     
+    
+    
+    
+-----------------------------------------------------------------------------------------    
+kubectl create -f <file.yaml>                          = create a volume
+kubectl get persistentvolume                           = show the volume details
 
 
+     
+-------------------------------------------------------------------------------------------------
+_________________________________________
+    create persistentvolumeclaim
+_________________________________________
+
+apiVersion: v1
+kind: persistentvolumeClaim
+metadata:
+  name: pvc-volume
+spec:
+  accessModes:
+    - ReadWritOnce
+  resources:
+    requests:
+      storage: 200Mi
+      
+---------------------------------------------------------------------------------------------
+kubectl create -f <pvc.yaml>                            = create pvc
+kubectl get pvc                                         = to get details
+kubectl describe pvc                                    = to get full descripction of the pvc
 
 
+--------------------------------------------------------------------------------------------
+________________________________________
+create pod to add volume
+________________________________________
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  volumes:
+  - name: host-vol
+    persistentVolumeClaim:
+      claimName: pvc-volume       ---> attach the name of the pvc 
+  containers:
+  - name: busybox
+    image: busybox
+    volumeMounts:
+    - name: host-vol             ---> it's mount the same name of volume
+      mountPath: /volume-test
+      
+---------------------------------------------------------------------------------------------
 
-
-
-
+      
 
 
 
